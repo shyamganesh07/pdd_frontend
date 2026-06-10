@@ -1,0 +1,47 @@
+{
+  "short_name": "TradeMind",
+  "name": "TradeMind AI — Institutional Trading OS",
+  "description": "Neural-Adaptive Multi-Asset Trading Intelligence & Behavioral OS",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay"],
+  "orientation": "portrait",
+  "theme_color": "#030712",
+  "background_color": "#030712",
+  "categories": ["finance", "utilities", "business"],
+  "screenshots": [
+    {
+      "src": "/screenshots/dashboard.png",
+      "sizes": "1536x730",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "url": "/",
+      "description": "Go to trading dashboard"
+    },
+    {
+      "name": "Trader DNA",
+      "url": "/?tab=dna",
+      "description": "View psychological analysis"
+    }
+  ]
+}
