@@ -14,7 +14,7 @@ export default function Register({ onRegister, onSwitchToLogin }) {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     
@@ -30,20 +30,45 @@ export default function Register({ onRegister, onSwitchToLogin }) {
 
     setLoading(true)
     
-    // Simulate "Temporary Storage" registration
-    setTimeout(() => {
-      const userData = {
-        ...formData,
-        registeredAt: new Date().toISOString(),
-        id: Math.random().toString(36).substr(2, 9)
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password
+        })
+      })
+
+      const data = await res.json()
+
+      if (res.ok) {
+        setLoading(false)
+        // Store user profile preview details locally
+        localStorage.setItem('user_profile', JSON.stringify({
+          email: formData.email,
+          username: formData.username,
+          name: formData.username,
+          password: formData.password
+        }))
+        onRegister({ email: formData.email, username: formData.username })
+      } else {
+        setLoading(false)
+        setError(data.detail || 'Registration failed')
       }
-      
-      // Store in localStorage
-      localStorage.setItem('user_profile', JSON.stringify(userData))
-      
+    } catch (err) {
+      console.warn("Backend server unreachable. Storing profile offline...", err)
+      localStorage.setItem('user_profile', JSON.stringify({
+        email: formData.email,
+        username: formData.username,
+        name: formData.username,
+        password: formData.password
+      }))
       setLoading(false)
-      onRegister(userData)
-    }, 1500)
+      alert("Server offline. Profile registered in offline-only mode on this device.")
+      onRegister({ email: formData.email, username: formData.username })
+    }
   }
 
   return (
@@ -73,6 +98,7 @@ export default function Register({ onRegister, onSwitchToLogin }) {
               value={formData.username}
               onChange={handleChange}
               autoComplete="username"
+              required
             />
           </div>
 
@@ -85,6 +111,7 @@ export default function Register({ onRegister, onSwitchToLogin }) {
               value={formData.email}
               onChange={handleChange}
               autoComplete="email"
+              required
             />
           </div>
 
@@ -97,6 +124,7 @@ export default function Register({ onRegister, onSwitchToLogin }) {
               value={formData.password}
               onChange={handleChange}
               autoComplete="new-password"
+              required
             />
           </div>
 

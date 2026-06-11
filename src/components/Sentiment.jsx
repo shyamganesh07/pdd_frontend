@@ -6,7 +6,7 @@ export default function Sentiment() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:8000/sentiment-engine')
+    fetch('/api/sentiment-engine')
       .then(res => res.json())
       .then(d => { setData(d); setLoading(false); })
       .catch(() => setLoading(false));
