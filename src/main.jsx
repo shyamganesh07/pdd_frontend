@@ -579,7 +579,8 @@ window.fetch = async (input, init) => {
   let isGet = !init || !init.method || init.method.toUpperCase() === 'GET';
 
   if (url && (url.startsWith('/api') || url.startsWith('http://localhost:8000') || url.startsWith('http://127.0.0.1:8000'))) {
-    if (isCapacitor) {
+    const shouldRewrite = isCapacitor || window.location.hostname !== 'localhost' || localStorage.getItem('backend_ip');
+    if (shouldRewrite) {
       let path = '';
       if (url.startsWith('/api')) {
         path = url.slice(4); // Remove "/api"

@@ -359,11 +359,9 @@ export default function App() {
       case 'academy': return <Academy onBack={() => setTab('dashboard')} />
       case 'history': return <History onBack={() => setTab('dashboard')} onSelect={handleResult} />
       case 'profile': {
-        const isMobileApp = (window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlatform() !== 'web') || 
-                            window.location.origin.startsWith('capacitor://');
         if (isAuthenticated && user) {
           return <Profile onLogout={handleLogout} onProfileUpdate={(updated) => setUser(updated)} />
-        } else if (isMobileApp) {
+        } else {
           if (authView === 'register') {
             return (
               <Register
@@ -382,6 +380,15 @@ export default function App() {
                 onLogin={(email) => {
                   setUserEmail(email)
                   setAuthView('verify')
+                }}
+                onGoogleLoginSuccess={(syncedUser) => {
+                  setUser(syncedUser)
+                  setIsAuthenticated(true)
+                  if (window.safeSetLocalStorage) {
+                    window.safeSetLocalStorage('is_authenticated', 'true')
+                  } else {
+                    localStorage.setItem('is_authenticated', 'true')
+                  }
                 }}
                 onSwitchToRegister={() => {
                   setUser(null)
@@ -424,24 +431,6 @@ export default function App() {
               />
             )
           }
-        } else {
-          return (
-            <FirebaseLoginScreen 
-              onLoginSuccess={(syncedUser) => {
-                setUser(syncedUser)
-                setIsAuthenticated(true)
-                setAuthLoading(false)
-              }}
-              onLoginStart={() => setAuthLoading(true)}
-              onLoginError={(msg) => {
-                setAuthLoading(false)
-                setAuthError(msg)
-              }}
-              loading={authLoading}
-              error={authError}
-              setError={setAuthError}
-            />
-          )
         }
       }
       default: return null
@@ -490,6 +479,13 @@ export default function App() {
                 setUserEmail(email)
                 setAuthView('verify')
                 window.history.pushState(null, '', '/verify')
+              }}
+              onGoogleLoginSuccess={(syncedUser) => {
+                setUser(syncedUser)
+                setIsAuthenticated(true)
+                localStorage.setItem('is_authenticated', 'true')
+                setTab('dashboard')
+                window.history.pushState(null, '', '/dashboard')
               }}
               onSwitchToRegister={() => {
                 localStorage.removeItem('user_profile')
